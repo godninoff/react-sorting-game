@@ -1,29 +1,96 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setQuantity, setValue, setSorted } from "../store/";
+import { store } from "../store/store";
 
 type ImageProps = {
   bgsettings: string;
 };
 
-interface IMenuProps {
-  title: string;
+type IMenuProps = {
   onSubmitGame: () => void;
-  setSettings: (options: IDefaultState) => void;
+};
+
+enum BG_BUTTON {
+  INCREACE = "increase",
+  DECREACE = "decrease",
 }
 
-export type IDefaultState = {
-  quantity: number;
-  values: string;
-  sorted: string;
+const Settings: React.FC<IMenuProps> = ({ onSubmitGame }) => {
+  const [sortedButton, setSortedButton] = React.useState<
+    BG_BUTTON.INCREACE | BG_BUTTON.DECREACE
+  >(BG_BUTTON.INCREACE);
+  const dispatch = useDispatch();
+  const { settings } = store.getState();
+
+  return (
+    <MainMenuBackground bgsettings="/images/bgsettings.png">
+      <Module>
+        <ContainerMenuSettings>
+          <Title>Кол-во предметов</Title>
+          <SettingsContainer>
+            <ValuesContainer>
+              {settings.quantity.map((el: number) => (
+                <Values key={el}>{el}</Values>
+              ))}
+            </ValuesContainer>
+
+            <InputValues>
+              {settings.quantity.map((el: number) => (
+                <RadioButton
+                  key={el}
+                  type="range"
+                  step={1}
+                  value={el}
+                  onChange={(e) => dispatch(setQuantity(el))}
+                />
+              ))}
+            </InputValues>
+          </SettingsContainer>
+          <Title>Значения</Title>
+          <SettingsContainer>
+            <ValuesContainer>
+              {settings.values.map((el: string) => (
+                <Values key={el}>{el}</Values>
+              ))}
+            </ValuesContainer>
+            <InputValues>
+              {settings.values.map((el: string) => (
+                <RadioButton
+                  key={el}
+                  type="range"
+                  step={1}
+                  value={el}
+                  onChange={(e) => dispatch(setValue(el))}
+                />
+              ))}
+            </InputValues>
+          </SettingsContainer>
+          <SortedButton
+            value={sortedButton}
+            onClick={(e) => dispatch(setSorted(BG_BUTTON.INCREACE))}
+          >
+            По возрастанию
+          </SortedButton>
+          <SortedButton
+            value={sortedButton}
+            onClick={(e) => dispatch(setSorted(BG_BUTTON.DECREACE))}
+          >
+            По убыванию
+          </SortedButton>
+          <GameButton onClick={() => onSubmitGame()}>Играть</GameButton>
+        </ContainerMenuSettings>
+      </Module>
+    </MainMenuBackground>
+  );
 };
 
 const MainMenuBackground = styled.div<ImageProps>`
   background-image: url(${(props) => props.bgsettings});
+  background-size: cover;
+  height: 100vh;
   display: flex;
-  width: 100%;
-  width: 980px;
-  height: 100%;
-  margin: auto;
 `;
 
 const Module = styled.div`
@@ -31,7 +98,6 @@ const Module = styled.div`
   text-align: center;
   position: relative;
   width: 699px;
-  height: 100vh;
   background: #ffffff;
   border-radius: 40px;
   margin: auto;
@@ -41,17 +107,16 @@ const Module = styled.div`
 
 const ContainerMenuSettings = styled.div`
   background: white;
-  width: 100%;
   border-radius: 40px;
 `;
 
 const Title = styled.h2`
   font-family: "Helvetica", sans-serif;
   color: #423f45;
-  font-weight: 400;
+  font-weight: 600;
   font-size: 32px;
   line-height: 44px;
-  padding-top: 57px;
+  padding-top: 30px;
   padding-bottom: 16px;
   margin: 0;
 `;
@@ -96,7 +161,7 @@ const SortedButton = styled.button`
   background: #ffd748;
   border-radius: 20px;
   border: none;
-  margin-top: 20px;
+  margin-top: 70px;
   margin-left: 10px;
   font-family: "Calibri";
   font-weight: 700;
@@ -106,7 +171,6 @@ const SortedButton = styled.button`
 `;
 
 const GameButton = styled.button`
-  width: 260px;
   background: #38df7a;
   box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.1);
   border-radius: 20px;
@@ -114,126 +178,41 @@ const GameButton = styled.button`
   font-family: "Helvetica";
   font-weight: 400;
   font-size: 32px;
-  margin-top: 10px;
+  color: #ffffff;
+  padding: 4px 73px 12px 77px;
+  margin: 90px 0 30px;
   cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 const RadioButton = styled.input`
-  &::after {
-    width: 23px;
-    height: 23px;
-    border-radius: 15px;
-    top: -4px;
-    left: -7px;
-    position: relative;
-    background-color: #d1d3d1;
-    content: "";
-    display: inline-block;
-    visibility: visible;
-  }
-  &:checked:after {
-    width: 23px;
-    height: 23px;
-    border-radius: 15px;
-    top: -4px;
-    left: -7px;
-    position: relative;
-    background-color: #104987;
-    content: "";
-    display: inline-block;
-    visibility: visible;
-  }
+  -webkit-appearance: none;
+  // &::after {
+  //   width: 23px;
+  //   height: 23px;
+  //   border-radius: 15px;
+  //   top: -4px;
+  //   left: -7px;
+  //   position: relative;
+  //   background-color: #d1d3d1;
+  //   content: "";
+  //   display: inline-block;
+  //   visibility: visible;
+  // }
+  // &:checked:after {
+  //   width: 23px;
+  //   height: 23px;
+  //   border-radius: 15px;
+  //   top: -4px;
+  //   left: -7px;
+  //   position: relative;
+  //   background-color: #104987;
+  //   content: "";
+  //   display: inline-block;
+  //   visibility: visible;
+  // }
 `;
-
-const Settings: React.FC<IMenuProps> = ({ onSubmitGame, setSettings }) => {
-  const defaultState: IDefaultState = {
-    quantity: 2,
-    values: "A",
-    sorted: "increase",
-  };
-  const [items, setItems] = React.useState([2, 3, 4, 5]);
-  const [values, setValues] = React.useState(["A", 9, 19, 50, 99, 999]);
-
-  const [options, setOptions] = React.useState(defaultState);
-
-  const onSort = (value: string) =>
-    setOptions((prev) => ({ ...prev, sorted: value }));
-
-  const onSortCondition = (e: React.MouseEvent) => {
-    const target = e.target as HTMLInputElement;
-    const inter = target.value;
-
-    onSort(inter);
-  };
-
-  React.useEffect(() => {
-    setSettings(options);
-  }, [options]);
-
-  return (
-    <MainMenuBackground bgsettings="/images/bgsettings.png">
-      <Module>
-        <ContainerMenuSettings>
-          <Title>Кол-во предметов</Title>
-          <SettingsContainer>
-            <ValuesContainer>
-              {items.map((index) => (
-                <Values key={index}>{index}</Values>
-              ))}
-            </ValuesContainer>
-
-            <InputValues>
-              {items.map((index) => (
-                <RadioButton
-                  key={index}
-                  type="radio"
-                  name="radio"
-                  value={index}
-                  onChange={(e) =>
-                    setOptions((prev) => ({
-                      ...prev,
-                      quantity: Number(e.target.value),
-                    }))
-                  }
-                />
-              ))}
-            </InputValues>
-          </SettingsContainer>
-          <Title>Значения</Title>
-          <SettingsContainer>
-            <ValuesContainer>
-              {values.map((index) => (
-                <Values key={index}>{index}</Values>
-              ))}
-            </ValuesContainer>
-            <InputValues>
-              {values.map((index) => (
-                <RadioButton
-                  key={index}
-                  type="radio"
-                  name="radio"
-                  value={index}
-                  onChange={(e) =>
-                    setOptions((prev) => ({
-                      ...prev,
-                      values: String(e.target.value),
-                    }))
-                  }
-                />
-              ))}
-            </InputValues>
-          </SettingsContainer>
-          <SortedButton value="increase" onClick={(e) => onSortCondition(e)}>
-            По возрастанию
-          </SortedButton>
-          <SortedButton value="decrease" onClick={(e) => onSortCondition(e)}>
-            По убыванию
-          </SortedButton>
-          <GameButton onClick={() => onSubmitGame()}>Играть</GameButton>
-        </ContainerMenuSettings>
-      </Module>
-    </MainMenuBackground>
-  );
-};
 
 export default Settings;

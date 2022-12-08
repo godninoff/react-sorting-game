@@ -1,24 +1,15 @@
 import Head from "next/head";
 import React from "react";
 import CookieGame from "./cookieGame";
-import Settings, { IDefaultState } from "./settings";
+import Settings from "./settings";
 
 export default function Home() {
   const [gameBackground, setGameBackground] = React.useState(false);
   const [settingsBackground, setSettingsBackground] = React.useState(true);
-  const [settings, setSettings] = React.useState({
-    quantity: 2,
-    values: "A",
-    sorted: "increase",
-  });
 
   const onSubmitGame = () => {
     setGameBackground(true);
     setSettingsBackground(false);
-  };
-
-  const onSettings = (options: IDefaultState) => {
-    setSettings(options);
   };
 
   return (
@@ -28,15 +19,9 @@ export default function Home() {
       </Head>
 
       <main>
-        {settingsBackground && (
-          <Settings
-            onSubmitGame={onSubmitGame}
-            title={""}
-            setSettings={onSettings}
-          />
-        )}
+        {settingsBackground && <Settings onSubmitGame={onSubmitGame} />}
 
-        {gameBackground && <CookieGame settings={settings} />}
+        {gameBackground && <CookieGame />}
       </main>
     </>
   );

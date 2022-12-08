@@ -1,5 +1,35 @@
 import styled from "@emotion/styled";
-import { IDefaultState } from "./settings";
+import { Settings } from "../store";
+import { store } from "../store/store";
+
+type ImageProps = {
+  coockieBg: string;
+};
+
+type Pallete = {
+  pallete: string;
+};
+
+const CookieGame: React.FC<Settings> = ({ quantity }) => {
+  const { settings } = store.getState();
+
+  return (
+    <CookieGameBg coockieBg="/images/coockiebg.png">
+      <CookieContainer>
+        <CookieItem draggable={true}>119</CookieItem>
+        <CookieItem draggable={true}>118</CookieItem>
+        <CookieItem draggable={true}>48</CookieItem>
+        <CookieItem draggable={true}>52</CookieItem>
+      </CookieContainer>
+
+      <PalleteContainer pallete="/images/pallet.png">
+        {Array.from(Array(settings.choosenQuantity)).map((x) => (
+          <Circle />
+        ))}
+      </PalleteContainer>
+    </CookieGameBg>
+  );
+};
 
 const CookieGameBg = styled.div<ImageProps>`
   background-image: url(${(props) => props.coockieBg});
@@ -48,36 +78,5 @@ const Circle = styled.div`
   box-shadow: inset 0px 4px 25px rgba(0, 0, 0, 0.25);
   margin-right: 4px;
 `;
-
-type ImageProps = {
-  coockieBg: string;
-};
-
-type Pallete = {
-  pallete: string;
-};
-
-type CookieGameProps = {
-  settings: IDefaultState;
-};
-
-const CookieGame: React.FC<CookieGameProps> = ({ settings }) => {
-  return (
-    <CookieGameBg coockieBg="/images/coockiebg.png">
-      <CookieContainer>
-        <CookieItem draggable={true}>119</CookieItem>
-        <CookieItem draggable={true}>118</CookieItem>
-        <CookieItem draggable={true}>48</CookieItem>
-        <CookieItem draggable={true}>52</CookieItem>
-      </CookieContainer>
-
-      <PalleteContainer pallete="/images/pallet.png">
-        {Array.from(Array(settings.quantity)).map((x) => (
-          <Circle key={x}></Circle>
-        ))}
-      </PalleteContainer>
-    </CookieGameBg>
-  );
-};
 
 export default CookieGame;
