@@ -1,7 +1,7 @@
 import Head from "next/head";
 import React from "react";
 import CookieGame from "./cookieGame";
-import Settings from "./settings";
+import StartMenu from "./StartMenu";
 
 export default function Home() {
   const [gameBackground, setGameBackground] = React.useState(false);
@@ -19,9 +19,18 @@ export default function Home() {
       </Head>
 
       <main>
-        {settingsBackground && <Settings onSubmitGame={onSubmitGame} />}
+        {settingsBackground && <StartMenu onSubmitGame={onSubmitGame} />}
 
-        {gameBackground && <CookieGame />}
+        {gameBackground && (
+          <CookieGame
+            quantity={[]}
+            values={[]}
+            sorted={""}
+            choosenQuantity={0}
+            choosenValue={""}
+            choosenSort={""}
+          />
+        )}
       </main>
     </>
   );

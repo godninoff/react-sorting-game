@@ -18,20 +18,15 @@ const initialState: Settings = {
   quantity: [2, 3, 4, 5],
   values: ["A", "9", "19", "50", "99", "999"],
   sorted: "increase",
-  choosenQuantity: 0,
-  choosenValue: "",
-  choosenSort: "",
+  choosenQuantity: 2,
+  choosenValue: "A",
+  choosenSort: "increase",
 };
 
 export const settingsSlice = createSlice({
   name: "settings",
   initialState,
   reducers: {
-    // setSettings: (state, action: PayloadAction<Settings>) => {
-    //   state.quantity = action.payload.quantity;
-    //   state.values = action.payload.values;
-    //   state.sorted = action.payload.sorted;
-    // },
     setQuantity: (state, action: PayloadAction<number>) => {
       return { ...state, choosenQuantity: action.payload };
     },
