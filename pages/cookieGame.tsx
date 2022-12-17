@@ -17,6 +17,10 @@ type CookiesImg = {
   cookiesImg: string;
 };
 
+type Popups = {
+  popup: string;
+};
+
 type SortedProps = {
   sorted: string;
 };
@@ -38,12 +42,12 @@ const CookieGame: React.FC<Settings> = () => {
   const { settings } = store.getState();
 
   const [itemsCount, setItemsCount] = React.useState<number[]>([]);
-  const [random, setRandom] = React.useState(arrayRandElement(gameTheme));
+  const [itemsCountPallete, setItemsCountPallete] = React.useState<number[]>(
+    []
+  );
 
-  React.useEffect(() => {
-    const res = getRange() as number[];
-    setItemsCount(res);
-  }, []);
+  const [random, setRandom] = React.useState(arrayRandElement(gameTheme));
+  const [endGame, setEndGame] = React.useState(false);
 
   const getRange = () => {
     if (settings.choosenValue === "A")
@@ -60,20 +64,38 @@ const CookieGame: React.FC<Settings> = () => {
       return getUniqueValueInRange(settings.choosenQuantity, 100, 999);
   };
 
+  React.useEffect(() => {
+    const res = getRange() as number[];
+    setItemsCount(res);
+  }, []);
+
+  React.useEffect(() => {
+    let clone = itemsCount.slice(0);
+    setItemsCountPallete(clone.sort((a, b) => a - b));
+  }, [itemsCount]);
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
   };
+
+  const [state, setState] = React.useState(1);
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    e.stopPropagation();
     const itemId = e.dataTransfer.getData("dataId");
     const getItemId = document.getElementById(itemId) as HTMLDivElement;
     const target = e.target as HTMLDivElement;
-    target.appendChild(getItemId);
+
+    if (itemId === target.id) {
+      target.appendChild(getItemId);
+      setState(state + 1);
+      if (state === itemsCount.length) {
+        setEndGame(true);
+      }
+    }
   };
 
-  const drag = (
+  const handleDragStart = (
     e: React.DragEvent<HTMLDivElement> & { target: { id: string } }
   ) => {
     e.dataTransfer.setData("dataId", e.target.id);
@@ -85,11 +107,11 @@ const CookieGame: React.FC<Settings> = () => {
         {itemsCount.map((el: number | string, index) => (
           <ItemWrapper>
             <CookiesImage
-              id={`dataId-${String(index)}`}
+              id={`dataId-${String(el)}`}
               key={index}
               cookiesImg={arrayRandElement(random.items)}
               draggable={true}
-              onDragStart={drag}
+              onDragStart={handleDragStart}
             >
               <CookieItem>{el}</CookieItem>
             </CookiesImage>
@@ -109,18 +131,67 @@ const CookieGame: React.FC<Settings> = () => {
           pallete={random.pallete}
           sorted={settings.choosenSort}
         >
-          {Array.from(Array(settings.choosenQuantity)).map((_x, index) => (
+          {itemsCountPallete.map((el, index) => (
             <Circle
+              id={`dataId-${String(el)}`}
               key={index}
               onDragOver={handleDragOver}
               onDrop={handleDrop}
-            />
+            ></Circle>
           ))}
         </PalleteContainer>
       </Wrapper>
+      <Popup popup="/images/popup.png" className={endGame ? "visible" : ""}>
+        <PopupButton>Заново</PopupButton>
+      </Popup>
     </CookieGameBg>
   );
 };
+
+const Popup = styled.div<Popups>`
+  background-image: url(${(props) => props.popup});
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.3s, opacity 0.3s linear;
+  &.visible {
+    visibility: visible;
+    opacity: 1;
+  }
+`;
+
+const PopupButton = styled.div`
+  width: 263px;
+  height: 68px;
+  color: #ffffff;
+  background: #2bd600;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  font-family: "Circe Rounded Alt ";
+  font-style: normal;
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 51px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin-top: 400px;
+  &:hover {
+    opacity: 0.8;
+  }
+`;
 
 const CookiesImage = styled.div<CookiesImg>`
   display: grid;

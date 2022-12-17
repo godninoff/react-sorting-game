@@ -1,3 +1,6 @@
+import { store } from "../store/store";
+const { settings } = store.getState();
+
 export const getUniqueValueInRange = (
   quantity: number,
   max: number,
