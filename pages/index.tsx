@@ -4,7 +4,7 @@ import CookieGame from "./cookieGame";
 import StartMenu from "./StartMenu";
 
 export default function Home() {
-  const [gameBackground, setGameBackground] = React.useState(false);
+  const [gameBackground, setGameBackground] = React.useState<boolean>(false);
   const [settingsBackground, setSettingsBackground] = React.useState(true);
 
   const onSubmitGame = () => {
@@ -29,6 +29,11 @@ export default function Home() {
             choosenQuantity={0}
             choosenValue={""}
             choosenSort={""}
+            onSubmitGame={function (): void {
+              throw new Error("Function not implemented.");
+            }}
+            setGameBackground={setGameBackground}
+            setSettingsBackground={setSettingsBackground}
           />
         )}
       </main>

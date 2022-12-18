@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Settings } from "../store";
 import { store } from "../store/store";
+import { setQuantity, setValue, setSorted } from "../store";
 import {
   arrayRandElement,
   gameTheme,
@@ -38,8 +40,12 @@ type Pallete = {
   sorted: string;
 };
 
-const CookieGame: React.FC<Settings> = () => {
+const CookieGame: React.FC<Settings> = ({
+  setGameBackground,
+  setSettingsBackground,
+}) => {
   const { settings } = store.getState();
+  const dispatch = useDispatch();
 
   const [itemsCount, setItemsCount] = React.useState<number[]>([]);
   const [itemsCountPallete, setItemsCountPallete] = React.useState<number[]>(
@@ -48,6 +54,15 @@ const CookieGame: React.FC<Settings> = () => {
 
   const [random, setRandom] = React.useState(arrayRandElement(gameTheme));
   const [endGame, setEndGame] = React.useState(false);
+
+  const onResetGame = () => {
+    dispatch(setQuantity(2));
+    dispatch(setValue("A"));
+    dispatch(setSorted("increase"));
+    setEndGame(false);
+    setGameBackground(false);
+    setSettingsBackground(true);
+  };
 
   const getRange = () => {
     if (settings.choosenValue === "A")
@@ -71,7 +86,16 @@ const CookieGame: React.FC<Settings> = () => {
 
   React.useEffect(() => {
     let clone = itemsCount.slice(0);
-    setItemsCountPallete(clone.sort((a, b) => a - b));
+    let sorted = clone.sort((a, b) => {
+      if (settings.choosenSort === "increase") {
+        if (a > b) {
+          return 1;
+        } else return -1;
+      } else if (b > a) {
+        return 1;
+      } else return -1;
+    });
+    setItemsCountPallete(sorted);
   }, [itemsCount]);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -142,7 +166,7 @@ const CookieGame: React.FC<Settings> = () => {
         </PalleteContainer>
       </Wrapper>
       <Popup popup="/images/popup.png" className={endGame ? "visible" : ""}>
-        <PopupButton>Заново</PopupButton>
+        <PopupButton onClick={onResetGame}>Заново</PopupButton>
       </Popup>
     </CookieGameBg>
   );
