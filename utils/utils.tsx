@@ -36,6 +36,7 @@ export interface gameBg {
   items: string[];
   background: string;
   pallete: string;
+  audio: string;
 }
 
 export const gameTheme: gameBg[] = [
@@ -48,11 +49,13 @@ export const gameTheme: gameBg[] = [
     ],
     background: "/images/coockiebg.png",
     pallete: "/images/pallet.png",
+    audio: "/audio/theme.wav",
   },
   {
     items: ["/images/coin1.png", "/images/coin2.png", "/images/coin3.png"],
     background: "/images/coinbg.png",
     pallete: "/images/pallet2.png",
+    audio: "/audio/theme.wav",
   },
   {
     items: [
@@ -64,6 +67,7 @@ export const gameTheme: gameBg[] = [
     ],
     background: "/images/flowersbg.png",
     pallete: "/images/pallet3.png",
+    audio: "/audio/theme.wav",
   },
   {
     items: [
@@ -74,5 +78,6 @@ export const gameTheme: gameBg[] = [
     ],
     background: "/images/christmasbg.png",
     pallete: "/images/pallet4.png",
+    audio: "/audio/theme.wav",
   },
 ];

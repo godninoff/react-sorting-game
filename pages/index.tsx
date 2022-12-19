@@ -1,6 +1,6 @@
 import Head from "next/head";
 import React from "react";
-import CookieGame from "./cookieGame";
+import CookieGame from "./gamePage";
 import StartMenu from "./StartMenu";
 
 export default function Home() {
@@ -29,9 +29,6 @@ export default function Home() {
             choosenQuantity={0}
             choosenValue={""}
             choosenSort={""}
-            onSubmitGame={function (): void {
-              throw new Error("Function not implemented.");
-            }}
             setGameBackground={setGameBackground}
             setSettingsBackground={setSettingsBackground}
           />

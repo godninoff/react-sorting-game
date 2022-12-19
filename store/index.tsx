@@ -12,9 +12,6 @@ export interface Settings {
   choosenQuantity: number;
   choosenValue: string;
   choosenSort: string;
-  onSubmitGame: () => void;
-  setGameBackground: (active: boolean) => void;
-  setSettingsBackground: (active: boolean) => void;
 }
 
 const initialState: Settings = {
@@ -24,15 +21,6 @@ const initialState: Settings = {
   choosenQuantity: 2,
   choosenValue: "A",
   choosenSort: "increase",
-  onSubmitGame: function (): void {
-    throw new Error("Function not implemented.");
-  },
-  setGameBackground: function (): void {
-    throw new Error("Function not implemented.");
-  },
-  setSettingsBackground: function (): void {
-    throw new Error("Function not implemented.");
-  },
 };
 
 export const settingsSlice = createSlice({
