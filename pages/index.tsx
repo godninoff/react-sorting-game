@@ -1,15 +1,19 @@
 import Head from "next/head";
 import React from "react";
-import CookieGame from "./gamePage";
-import StartMenu from "./StartMenu";
+import CookieGame from "./gamePage/gamePage";
+import { useDispatch, useSelector } from "react-redux";
+import StartMenu from "../startMenu/startMenu";
+import { RootState } from "../store/store";
+import { changeTheme } from "../store/themeSelector";
 
 export default function Home() {
-  const [gameBackground, setGameBackground] = React.useState<boolean>(false);
-  const [settingsBackground, setSettingsBackground] = React.useState(true);
+  const dispatch = useDispatch();
+  const theme = useSelector(
+    (state: RootState) => state.theme.settingsBackground
+  );
 
   const onSubmitGame = () => {
-    setGameBackground(true);
-    setSettingsBackground(false);
+    dispatch(changeTheme());
   };
 
   return (
@@ -19,20 +23,8 @@ export default function Home() {
       </Head>
 
       <main>
-        {settingsBackground && <StartMenu onSubmitGame={onSubmitGame} />}
-
-        {gameBackground && (
-          <CookieGame
-            quantity={[]}
-            values={[]}
-            sorted={""}
-            choosenQuantity={0}
-            choosenValue={""}
-            choosenSort={""}
-            setGameBackground={setGameBackground}
-            setSettingsBackground={setSettingsBackground}
-          />
-        )}
+        {theme && <StartMenu onSubmitGame={onSubmitGame} />}
+        {!theme && <CookieGame />}
       </main>
     </>
   );

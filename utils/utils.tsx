@@ -1,16 +1,13 @@
-import { store } from "../store/store";
-const { settings } = store.getState();
-
 export const getUniqueValueInRange = (
   quantity: number,
   max: number,
   min: number
-) => {
+): number[] => {
   const set = new Set();
   while (set.size < quantity) {
     set.add(Math.floor(Math.random() * (max - min)) + min);
   }
-  return Array.from(set);
+  return Array.from(set) as number[];
 };
 
 export const getRandomLetter = (quantity: number) => {
@@ -27,7 +24,24 @@ export const getRandomLetter = (quantity: number) => {
   return arr.map((e: number) => String.fromCharCode(e));
 };
 
-export const arrayRandElement = (arr: string | any[]) => {
+export const getRange = (choosenValue: string, choosenQuantity: number) => {
+  let result: Array<number | string> = [];
+  if (choosenValue === "A") result = getRandomLetter(choosenQuantity);
+  if (choosenValue === "9")
+    result = getUniqueValueInRange(choosenQuantity, 1, 9);
+  if (choosenValue === "19")
+    result = getUniqueValueInRange(choosenQuantity, 10, 19);
+  if (choosenValue === "50")
+    result = getUniqueValueInRange(choosenQuantity, 20, 50);
+  if (choosenValue === "99")
+    result = getUniqueValueInRange(choosenQuantity, 51, 99);
+  if (choosenValue === "999") {
+    result = getUniqueValueInRange(choosenQuantity, 100, 999);
+  }
+  return result;
+};
+
+export const arrayRandElement = <T,>(arr: T[]): T => {
   let rand = Math.floor(Math.random() * arr.length);
   return arr[rand];
 };
@@ -45,14 +59,21 @@ export const gameTheme: gameBg[] = [
       "/images/burger.png",
       "/images/confetti.png",
       "/images/ring.png",
-      "images/star.png",
+      "/images/star.png",
+      "/images/ring.png",
     ],
     background: "/images/coockiebg.png",
     pallete: "/images/pallet.png",
     audio: "/audio/theme.wav",
   },
   {
-    items: ["/images/coin1.png", "/images/coin2.png", "/images/coin3.png"],
+    items: [
+      "/images/coin1.png",
+      "/images/coin2.png",
+      "/images/coin3.png",
+      "/images/coin2.png",
+      "/images/coin3.png",
+    ],
     background: "/images/coinbg.png",
     pallete: "/images/pallet2.png",
     audio: "/audio/theme.wav",
@@ -75,6 +96,7 @@ export const gameTheme: gameBg[] = [
       "/images/decor2.png",
       "/images/decor3.png",
       "/images/decor4.png",
+      "/images/decor3.png",
     ],
     background: "/images/christmasbg.png",
     pallete: "/images/pallet4.png",

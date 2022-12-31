@@ -1,97 +1,38 @@
 import styled from "@emotion/styled";
 import React from "react";
-import { useDispatch } from "react-redux";
-import { Settings } from "../store";
-import { store } from "../store/store";
-import { setQuantity, setValue, setSorted } from "../store";
-import {
-  arrayRandElement,
-  gameTheme,
-  getRandomLetter,
-  getUniqueValueInRange,
-} from "../utils/utils";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, store } from "../../store/store";
+import { setDefaultSettings } from "../../store";
+import { arrayRandElement, gameTheme, getRange } from "../../utils/utils";
+import { IImage, Pallete } from "./types";
+import { changeTheme } from "../../store/themeSelector";
 
-type ImageProps = {
-  coockieBg: string;
-};
-
-type CookiesImg = {
-  cookiesImg: string;
-};
-
-type Popups = {
-  popup: string;
-};
-
-type SortedProps = {
-  sorted: string;
-};
-
-type PointerInc = {
-  increase: string;
-};
-
-type PointerDec = {
-  decrease: string;
-};
-
-type Pallete = {
-  pallete: string;
-  sorted: string;
-};
-
-type BackgroundProps = {
-  setGameBackground: (active: boolean) => void;
-  setSettingsBackground: (active: boolean) => void;
-};
-
-const CookieGame: React.FC<Settings & BackgroundProps> = ({
-  setGameBackground,
-  setSettingsBackground,
-}) => {
+const GamePage = () => {
   const { settings } = store.getState();
   const dispatch = useDispatch();
-
-  const [itemsCount, setItemsCount] = React.useState<number[]>([]);
-  const [itemsCountPallete, setItemsCountPallete] = React.useState<number[]>(
+  const randomTheme = useSelector((state: RootState) => state.gameTheme);
+  const [itemsCount, setItemsCount] = React.useState<Array<number | string>>(
     []
   );
-
-  const [random, setRandom] = React.useState(arrayRandElement(gameTheme));
+  const [itemsCountPallete, setItemsCountPallete] = React.useState<
+    Array<number | string>
+  >([]);
   const [endGame, setEndGame] = React.useState(false);
 
   const onResetGame = () => {
-    dispatch(setQuantity(2));
-    dispatch(setValue("A"));
-    dispatch(setSorted("increase"));
+    dispatch(setDefaultSettings());
     setEndGame(false);
-    setGameBackground(false);
-    setSettingsBackground(true);
-  };
-
-  const getRange = () => {
-    if (settings.choosenValue === "A")
-      return getRandomLetter(settings.choosenQuantity);
-    if (settings.choosenValue === "9")
-      return getUniqueValueInRange(settings.choosenQuantity, 1, 9);
-    if (settings.choosenValue === "19")
-      return getUniqueValueInRange(settings.choosenQuantity, 10, 19);
-    if (settings.choosenValue === "50")
-      return getUniqueValueInRange(settings.choosenQuantity, 20, 50);
-    if (settings.choosenValue === "99")
-      return getUniqueValueInRange(settings.choosenQuantity, 51, 99);
-    if (settings.choosenValue === "999")
-      return getUniqueValueInRange(settings.choosenQuantity, 100, 999);
+    dispatch(changeTheme());
   };
 
   React.useEffect(() => {
-    const res = getRange() as number[];
+    const res = getRange(settings.choosenValue, settings.choosenQuantity);
     setItemsCount(res);
   }, []);
 
   React.useEffect(() => {
     let clone = itemsCount.slice(0);
-    let sorted = clone.sort((a, b) => {
+    let sorted: Array<number | string> = clone.sort((a, b) => {
       if (settings.choosenSort === "increase") {
         if (a > b) {
           return 1;
@@ -131,23 +72,23 @@ const CookieGame: React.FC<Settings & BackgroundProps> = ({
   };
 
   return (
-    <CookieGameBg coockieBg={random.background}>
-      <CookieContainer>
+    <Background cookieBg={randomTheme.background}>
+      <ItemsContainer>
         {/* <audio src={random.audio} autoPlay></audio> */}
         {itemsCount.map((el: number | string, index) => (
           <ItemWrapper>
-            <CookiesImage
+            <ItemImage
               id={`dataId-${String(el)}`}
               key={index}
-              cookiesImg={arrayRandElement(random.items)}
+              cookiesImg={randomTheme.items[index]}
               draggable={true}
               onDragStart={handleDragStart}
             >
-              <CookieItem>{el}</CookieItem>
-            </CookiesImage>
+              <Item>{el}</Item>
+            </ItemImage>
           </ItemWrapper>
         ))}
-      </CookieContainer>
+      </ItemsContainer>
       <Wrapper>
         <Wrap sorted={settings.choosenSort}>
           {settings.choosenSort === "increase" ? (
@@ -158,7 +99,7 @@ const CookieGame: React.FC<Settings & BackgroundProps> = ({
         </Wrap>
 
         <PalleteContainer
-          pallete={random.pallete}
+          pallete={randomTheme.pallete}
           sorted={settings.choosenSort}
         >
           {itemsCountPallete.map((el, index) => (
@@ -174,11 +115,11 @@ const CookieGame: React.FC<Settings & BackgroundProps> = ({
       <Popup popup="/images/popup.png" className={endGame ? "visible" : ""}>
         <PopupButton onClick={onResetGame}>Заново</PopupButton>
       </Popup>
-    </CookieGameBg>
+    </Background>
   );
 };
 
-const Popup = styled.div<Popups>`
+const Popup = styled.div<IImage>`
   background-image: url(${(props) => props.popup});
   background-repeat: no-repeat;
   background-size: contain;
@@ -223,7 +164,7 @@ const PopupButton = styled.div`
   }
 `;
 
-const CookiesImage = styled.div<CookiesImg>`
+const ItemImage = styled.div<IImage>`
   display: grid;
   background-image: url(${(props) => props.cookiesImg});
   background-repeat: no-repeat;
@@ -255,7 +196,7 @@ const Wrapper = styled.div`
   flex-direction: column;
 `;
 
-const Wrap = styled.div<SortedProps>`
+const Wrap = styled.div<IImage>`
   display: flex;
   width: 890px;
   margin: auto;
@@ -263,8 +204,8 @@ const Wrap = styled.div<SortedProps>`
     props.sorted === "increase" ? "flex-start" : "flex-end"};
 `;
 
-const CookieGameBg = styled.div<ImageProps>`
-  background-image: url(${(props) => props.coockieBg});
+const Background = styled.div<IImage>`
+  background-image: url(${(props) => props.cookieBg});
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -272,27 +213,27 @@ const CookieGameBg = styled.div<ImageProps>`
   height: 100vh;
 `;
 
-const PointerIncrease = styled.div<PointerInc>`
+const PointerIncrease = styled.div<IImage>`
   background-image: url(${(props) => props.increase});
   background-repeat: no-repeat;
   width: 360px;
   height: 70px;
 `;
 
-const PointerDecrease = styled.div<PointerDec>`
+const PointerDecrease = styled.div<IImage>`
   background-image: url(${(props) => props.decrease});
   background-repeat: no-repeat;
   width: 360px;
   height: 70px;
 `;
 
-const CookieContainer = styled.div`
+const ItemsContainer = styled.div`
   display: flex;
   justify-content: center;
   margin: 83px 0 50px;
 `;
 
-const CookieItem = styled.div`
+const Item = styled.div`
   display: grid;
   align-items: center;
   justify-content: center;
@@ -330,4 +271,4 @@ const Circle = styled.div`
   margin-right: 4px;
 `;
 
-export default CookieGame;
+export default GamePage;

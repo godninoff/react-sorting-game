@@ -36,8 +36,12 @@ export const settingsSlice = createSlice({
     setSorted: (state, action: PayloadAction<string>) => {
       return { ...state, choosenSort: action.payload };
     },
+    setDefaultSettings: (state) => {
+      return { ...state, ...initialState };
+    },
   },
 });
 
-export const { setQuantity, setValue, setSorted } = settingsSlice.actions;
+export const { setQuantity, setValue, setSorted, setDefaultSettings } =
+  settingsSlice.actions;
 export default settingsSlice.reducer;

@@ -3,19 +3,7 @@ import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setQuantity, setValue, setSorted } from "../store";
 import { RootState } from "../store/store";
-
-type ImageProps = {
-  bgsettings: string;
-};
-
-type IMenuProps = {
-  onSubmitGame: () => void;
-};
-
-export enum BG_BUTTON {
-  INCREACE = "increase",
-  DECREACE = "decrease",
-}
+import { IMenuProps, ImageProps, BG_BUTTON } from "./types";
 
 const StartMenu: React.FC<IMenuProps> = ({ onSubmitGame }) => {
   const dispatch = useDispatch();
